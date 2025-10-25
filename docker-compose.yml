@@ -1,0 +1,11 @@
+services:
+  tibia-scraper:
+    build: .
+    container_name: tibia-scraper
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=production
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
