@@ -1,32 +1,24 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+puppeteer.use(StealthPlugin());
 
 (async () => {
-    // se quiser usar o Chromium empacotado pelo Puppeteer, não passe executablePath
-    const browser = await puppeteer.launch({
-        headless: 'new', // headless moderno
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--single-process',
-            '--disable-background-networking',
-            '--window-size=1280,800'
-        ],
+    // set up browser environment
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // navigate to a URL
+    await page.goto('https://www.tibia.com', {
+        waitUntil: 'load',
     });
 
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1280, height: 800 });
+    // take page screenshot
+    await page.screenshot({ path: '/tmp/screenshot.png' });
 
-    // navega e espera a rede ficar ociosa
-    await page.goto('https://www.tibia.com', { waitUntil: 'networkidle2', timeout: 60000 });
-
-    // exemplo: salvar screenshot
-    await page.screenshot({ path: '/tmp/example.png', fullPage: true });
-
-    // exemplo: obter título
     const title = await page.title();
     console.log('title:', title);
 
+    // close the browser instance
     await browser.close();
 })();
