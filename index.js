@@ -5,7 +5,11 @@ puppeteer.use(StealthPlugin());
 
 (async () => {
     // set up browser environment
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: [
+            '--no-sandbox'
+        ]
+    });
     const page = await browser.newPage();
 
     // navigate to a URL
