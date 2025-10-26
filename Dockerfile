@@ -19,4 +19,4 @@ COPY . .
 
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-CMD ["node", "index.js"]
+CMD ["bash", "-c", "tail -f /dev/null"]
