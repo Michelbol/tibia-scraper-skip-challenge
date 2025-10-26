@@ -1,23 +1,32 @@
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-
-puppeteer.use(StealthPlugin());
+const puppeteer = require('puppeteer');
 
 (async () => {
+    // se quiser usar o Chromium empacotado pelo Puppeteer, não passe executablePath
     const browser = await puppeteer.launch({
-        headless: true, // pode trocar para false pra ver o navegador abrir
-        args: ['--no-sandbox']
+        headless: 'new', // headless moderno
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--single-process',
+            '--disable-background-networking',
+            '--window-size=1280,800'
+        ],
     });
 
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 });
 
-    await page.goto('https://www.tibia.com/community/?subtopic=guilds&page=view&GuildName=Quelibraland', {
-        waitUntil: 'networkidle2',
-        timeout: 60000 // aumenta o timeout (60s)
-    });
+    // navega e espera a rede ficar ociosa
+    await page.goto('https://www.tibia.com', { waitUntil: 'networkidle2', timeout: 60000 });
 
-    const html = await page.content();
-    console.log(html);
+    // exemplo: salvar screenshot
+    await page.screenshot({ path: '/tmp/example.png', fullPage: true });
+
+    // exemplo: obter título
+    const title = await page.title();
+    console.log('title:', title);
 
     await browser.close();
 })();
